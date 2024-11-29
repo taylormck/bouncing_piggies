@@ -10,6 +10,9 @@ SCREEN_HEIGHT :: 960
 
 BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
 
+piggy_sprite: rl.Texture2D
+piggy_sprite_source :: rl.Rectangle{7, 15, 18, 17}
+
 num_piggies: i32 = 1000000
 active_piggy_type := PiggyTypes.Packed
 
@@ -23,6 +26,9 @@ main :: proc() {
     defer rl.CloseWindow()
 
     rl.GuiLoadStyle("assets/styles/style_dark.rgs")
+
+    piggy_sprite = rl.LoadTexture("assets/sprites/piggy/piggy_sheet.png")
+    defer rl.UnloadTexture(piggy_sprite)
 
     for _ in 0 ..< num_piggies {
         append(&piggies_aligned, piggy_aligned_create())
@@ -139,8 +145,8 @@ PiggyTypes :: enum {
     Packed,
 }
 
-PIGGY_MIN_SIZE :: 1
-PIGGY_MAX_SIZE :: 5
+PIGGY_MIN_SIZE :: 20
+PIGGY_MAX_SIZE :: 30
 PIGGY_MIN_SPEED :: 10
 PIGGY_MAX_SPEED :: 25
 PIGGY_SPECIAL_COLOR_RATE :: 0.01
@@ -215,13 +221,8 @@ piggy_update :: proc(p: ^$Piggy, delta: f32) {
 }
 
 piggy_draw :: proc(p: ^$Piggy) {
-    color := p.special_color ? rl.MAROON : rl.PINK
+    tint := p.special_color ? rl.MAROON : rl.WHITE
+    dest := rl.Rectangle{p.position.x, p.position.y, f32(p.size), f32(p.size)}
 
-    rl.DrawRectangle(
-        i32(p.position.x),
-        i32(p.position.y),
-        p.size,
-        p.size,
-        color,
-    )
+    rl.DrawTexturePro(piggy_sprite, piggy_sprite_source, dest, {0, 0}, 0, tint)
 }
