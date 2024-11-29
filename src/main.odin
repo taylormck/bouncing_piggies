@@ -194,9 +194,9 @@ piggy_packed_create :: proc() -> PiggyPacked {
     velocity: [2]f32 = {velocity_x, velocity_y} * speed
 
     size := rand.int31_max(PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
-    fluff := rand.float32() >= 0.5
+    special_color := rand.float32() < PIGGY_SPECIAL_COLOR_RATE
 
-    return {position, velocity, size, speed, fluff}
+    return {position, velocity, size, speed, special_color}
 }
 
 piggy_update :: proc(p: ^$Piggy, delta: f32) {
