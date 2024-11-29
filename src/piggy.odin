@@ -91,3 +91,23 @@ piggy_draw :: proc(p: ^$Piggy) {
 
     rl.DrawTexturePro(piggy_sprite, piggy_sprite_source, dest, {0, 0}, 0, tint)
 }
+
+piggy_aligned_to_packed :: proc(p: ^PiggyAligned) -> PiggyPacked {
+    return PiggyPacked {
+        p.position,
+        p.velocity,
+        p.size,
+        p.speed,
+        p.special_color,
+    }
+}
+
+piggy_packed_to_aligned :: proc(p: ^PiggyPacked) -> PiggyAligned {
+    return PiggyAligned {
+        p.position,
+        p.velocity,
+        p.size,
+        p.speed,
+        p.special_color,
+    }
+}

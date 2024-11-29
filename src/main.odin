@@ -43,9 +43,17 @@ update :: proc(delta: f32) {
     if should_switch_piggy_type {
         switch (active_piggy_type) {
         case .Aligned:
+            for &p in piggies_aligned {
+                append(&piggies_packed, piggy_aligned_to_packed(&p))
+            }
+
             clear(&piggies_aligned)
             active_piggy_type = .Packed
         case .Packed:
+            for &p in piggies_packed {
+                append(&piggies_aligned, piggy_packed_to_aligned(&p))
+            }
+
             clear(&piggies_packed)
             active_piggy_type = .Aligned
         }
