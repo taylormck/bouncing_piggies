@@ -22,6 +22,13 @@ main :: proc() {
     rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Packed")
     defer rl.CloseWindow()
 
+    rl.GuiLoadStyle("assets/styles/style_dark.rgs")
+
+    // rl.GuiSetStyle(
+    //     rl.GuiControl.TEXTBOX,
+    //     i32(rl.GuiDefaultProperty.TEXT_SIZE),
+    //     40,
+    // )
 
     for _ in 0 ..< NUM_PIGGIES {
         append(&piggies_aligned, piggy_aligned_create())
@@ -72,9 +79,9 @@ draw :: proc() {
 }
 
 draw_fps :: proc() {
-    fps := fmt.caprintf("{}", rl.GetFPS())
-    rl.DrawRectangle(5, 5, 80, 40, rl.WHITE)
-    rl.DrawText(fps, 7, 7, 36, rl.GRAY)
+    fps := fmt.caprintf("FPS: {}", rl.GetFPS())
+    rl.GuiPanel({5, 5, 120, 80}, "#191# Stats")
+    rl.GuiTextBox({5, 5, 120, 80}, fps, 120, false)
 }
 
 PiggyTypes :: enum {
