@@ -11,6 +11,11 @@ You can adjust the number of pigs and toggle between packed & unpacked structs a
 
 ![Example screenshot](docs/example.png)
 
+### Results
+
+For the curious, whether the structs were packed or not had a negligible effect on performance on my machine.
+There was no measureable difference in framerate.
+
 ### How to run
 
 This app is written in Odin, so you'll need the Odin compiler set up to compile the app.
