@@ -8,10 +8,8 @@ import rl "vendor:raylib"
 SCREEN_WIDTH :: 1480
 SCREEN_HEIGHT :: 960
 
-
 BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
 
-// TODO: Make this adjsutable in the GUI
 num_piggies: i32 = 1000000
 active_piggy_type := PiggyTypes.Packed
 
