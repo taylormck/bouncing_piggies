@@ -10,9 +10,9 @@ SCREEN_HEIGHT :: 960
 
 
 BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
+
 // TODO: Make this adjsutable in the GUI
 NUM_PIGGIES :: 1000000
-
 ACTIVE_PIGGIES :: PiggyTypes.Packed
 
 piggies_aligned: [dynamic]PiggyAligned
@@ -86,21 +86,22 @@ PIGGY_MIN_SIZE :: 1
 PIGGY_MAX_SIZE :: 5
 PIGGY_MIN_SPEED :: 10
 PIGGY_MAX_SPEED :: 25
+PIGGY_SPECIAL_COLOR_RATE :: 0.01
 
 PiggyAligned :: struct {
-    position: [2]f32,
-    velocity: [2]f32,
-    size:     i32,
-    speed:    f32,
-    fluff:    bool,
+    position:      [2]f32,
+    velocity:      [2]f32,
+    size:          i32,
+    speed:         f32,
+    special_color: bool,
 }
 
 PiggyPacked :: struct #packed {
-    position: [2]f32,
-    velocity: [2]f32,
-    size:     i32,
-    speed:    f32,
-    fluff:    bool,
+    position:      [2]f32,
+    velocity:      [2]f32,
+    size:          i32,
+    speed:         f32,
+    special_color: bool,
 }
 
 piggy_aligned_create :: proc() -> PiggyAligned {
@@ -116,9 +117,9 @@ piggy_aligned_create :: proc() -> PiggyAligned {
     velocity: [2]f32 = {velocity_x, velocity_y} * speed
 
     size := rand.int31_max(PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
-    fluff := rand.float32() >= 0.5
+    special_color := rand.float32() < PIGGY_SPECIAL_COLOR_RATE
 
-    return {position, velocity, size, speed, fluff}
+    return {position, velocity, size, speed, special_color}
 }
 
 piggy_packed_create :: proc() -> PiggyPacked {
@@ -157,11 +158,13 @@ piggy_update :: proc(p: ^$Piggy, delta: f32) {
 }
 
 piggy_draw :: proc(p: ^$Piggy) {
+    color := p.special_color ? rl.MAROON : rl.PINK
+
     rl.DrawRectangle(
         i32(p.position.x),
         i32(p.position.y),
         p.size,
         p.size,
-        rl.PINK,
+        color,
     )
 }
