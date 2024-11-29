@@ -30,11 +30,6 @@ main :: proc() {
     piggy_sprite = rl.LoadTexture("assets/sprites/piggy/piggy_sheet.png")
     defer rl.UnloadTexture(piggy_sprite)
 
-    for _ in 0 ..< num_piggies {
-        append(&piggies_aligned, piggy_aligned_create())
-        append(&piggies_packed, piggy_packed_create())
-    }
-
     delta: f32
 
     for !rl.WindowShouldClose() {
@@ -107,12 +102,12 @@ draw :: proc() {
         }
     }
 
-    draw_fps()
+    draw_gui()
 
     rl.EndDrawing()
 }
 
-draw_fps :: proc() {
+draw_gui :: proc() {
     fps := fmt.caprintf("FPS: {}", rl.GetFPS())
     current_piggy_type: string = "unknown"
     switch (active_piggy_type) {
