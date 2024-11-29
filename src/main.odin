@@ -42,6 +42,8 @@ main :: proc() {
 }
 
 update :: proc(delta: f32) {
+    update_piggy_count()
+
     switch (active_piggy_type) {
     case .Aligned:
         for &piggy in piggies_aligned {
@@ -50,6 +52,27 @@ update :: proc(delta: f32) {
     case .Packed:
         for &piggy in piggies_packed {
             piggy_update(&piggy, delta)
+        }
+    }
+}
+
+update_piggy_count :: proc() {
+    switch (active_piggy_type) {
+    case .Aligned:
+        for i32(len(piggies_aligned)) < num_piggies {
+            append(&piggies_aligned, piggy_aligned_create())
+        }
+
+        if i32(len(piggies_aligned)) > num_piggies {
+            shrink(&piggies_aligned, num_piggies)
+        }
+    case .Packed:
+        for i32(len(piggies_packed)) < num_piggies {
+            append(&piggies_packed, piggy_packed_create())
+        }
+
+        if i32(len(piggies_packed)) > num_piggies {
+            shrink(&piggies_packed, num_piggies)
         }
     }
 }
@@ -98,7 +121,7 @@ draw_fps :: proc() {
     rl.GuiLabel({10, 100, 190, 20}, num_piggies_message)
 
     @(static) new_piggy_count: f32
-    rl.GuiSlider({10, 125, 190, 20}, "", "", &new_piggy_count, 2, 8)
+    rl.GuiSlider({10, 125, 190, 20}, "", "", &new_piggy_count, 2, 6)
     num_piggies = i32(math.pow10(new_piggy_count))
 }
 
