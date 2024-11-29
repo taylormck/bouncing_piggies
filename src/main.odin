@@ -12,11 +12,13 @@ SCREEN_HEIGHT :: 960
 BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
 
 // TODO: Make this adjsutable in the GUI
-NUM_PIGGIES :: 1000000
-ACTIVE_PIGGIES :: PiggyTypes.Packed
+num_piggies: i32 = 1000000
+active_piggy_type := PiggyTypes.Packed
 
 piggies_aligned: [dynamic]PiggyAligned
 piggies_packed: [dynamic]PiggyPacked
+
+should_switch_piggy_type := false
 
 main :: proc() {
     rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Packed")
@@ -24,13 +26,7 @@ main :: proc() {
 
     rl.GuiLoadStyle("assets/styles/style_dark.rgs")
 
-    // rl.GuiSetStyle(
-    //     rl.GuiControl.TEXTBOX,
-    //     i32(rl.GuiDefaultProperty.TEXT_SIZE),
-    //     40,
-    // )
-
-    for _ in 0 ..< NUM_PIGGIES {
+    for _ in 0 ..< num_piggies {
         append(&piggies_aligned, piggy_aligned_create())
         append(&piggies_packed, piggy_packed_create())
     }
@@ -46,7 +42,7 @@ main :: proc() {
 }
 
 update :: proc(delta: f32) {
-    switch (ACTIVE_PIGGIES) {
+    switch (active_piggy_type) {
     case .Aligned:
         for &piggy in piggies_aligned {
             piggy_update(&piggy, delta)
@@ -62,7 +58,7 @@ draw :: proc() {
     rl.BeginDrawing()
     rl.ClearBackground(BACKGROUND_COLOR)
 
-    switch (ACTIVE_PIGGIES) {
+    switch (active_piggy_type) {
     case .Aligned:
         for &piggy in piggies_aligned {
             piggy_draw(&piggy)
@@ -80,8 +76,30 @@ draw :: proc() {
 
 draw_fps :: proc() {
     fps := fmt.caprintf("FPS: {}", rl.GetFPS())
-    rl.GuiPanel({5, 5, 120, 80}, "#191# Stats")
-    rl.GuiTextBox({5, 5, 120, 80}, fps, 120, false)
+    current_piggy_type: string = "unknown"
+    switch (active_piggy_type) {
+    case .Aligned:
+        current_piggy_type = "Aligned"
+    case .Packed:
+        current_piggy_type = "Packed"
+    }
+    piggy_message := fmt.caprintf("Piggy Type: {}", current_piggy_type)
+    num_piggies_message := fmt.caprintf("Number of piggies: {}", num_piggies)
+
+    rl.GuiPanel({5, 5, 200, 160}, "#191# Stats")
+    rl.GuiLabel({10, 25, 190, 20}, fps)
+    rl.GuiLabel({10, 45, 190, 20}, piggy_message)
+
+    should_switch_piggy_type = rl.GuiButton(
+        {10, 70, 190, 25},
+        "Switch Piggy Type",
+    )
+
+    rl.GuiLabel({10, 100, 190, 20}, num_piggies_message)
+
+    @(static) new_piggy_count: f32
+    rl.GuiSlider({10, 125, 190, 20}, "", "", &new_piggy_count, 2, 8)
+    num_piggies = i32(math.pow10(new_piggy_count))
 }
 
 PiggyTypes :: enum {
