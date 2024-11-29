@@ -12,8 +12,8 @@ BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
 piggy_sprite: rl.Texture2D
 piggy_sprite_source :: rl.Rectangle{7, 15, 18, 17}
 
-num_piggies: i32 = 1000000
-active_piggy_type := PiggyTypes.Packed
+num_piggies: i32 = 100
+active_piggy_type := PiggyTypes.Aligned
 
 piggies_aligned: [dynamic]PiggyAligned
 piggies_packed: [dynamic]PiggyPacked
