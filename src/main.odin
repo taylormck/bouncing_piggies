@@ -11,7 +11,9 @@ SCREEN_HEIGHT :: 960
 
 BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
 // TODO: Make this adjsutable in the GUI
-NUM_PIGGIES :: 100000
+NUM_PIGGIES :: 1000000
+
+ACTIVE_PIGGIES :: PiggyTypes.Packed
 
 piggies_aligned: [dynamic]PiggyAligned
 piggies_packed: [dynamic]PiggyPacked
@@ -37,22 +39,31 @@ main :: proc() {
 }
 
 update :: proc(delta: f32) {
-    // for &piggy in piggies_aligned {
-    //     piggy_update(&piggy, delta)
-    // }
-
-    for &piggy in piggies_packed {
-        piggy_update(&piggy, delta)
+    switch (ACTIVE_PIGGIES) {
+    case .Aligned:
+        for &piggy in piggies_aligned {
+            piggy_update(&piggy, delta)
+        }
+    case .Packed:
+        for &piggy in piggies_packed {
+            piggy_update(&piggy, delta)
+        }
     }
 }
 
 draw :: proc() {
     rl.BeginDrawing()
-
     rl.ClearBackground(BACKGROUND_COLOR)
 
-    for &piggy in piggies_packed {
-        piggy_draw(&piggy)
+    switch (ACTIVE_PIGGIES) {
+    case .Aligned:
+        for &piggy in piggies_aligned {
+            piggy_draw(&piggy)
+        }
+    case .Packed:
+        for &piggy in piggies_packed {
+            piggy_draw(&piggy)
+        }
     }
 
     draw_fps()
@@ -66,8 +77,13 @@ draw_fps :: proc() {
     rl.DrawText(fps, 7, 7, 36, rl.GRAY)
 }
 
-PIGGY_MIN_SIZE :: 5
-PIGGY_MAX_SIZE :: 15
+PiggyTypes :: enum {
+    Aligned,
+    Packed,
+}
+
+PIGGY_MIN_SIZE :: 1
+PIGGY_MAX_SIZE :: 5
 PIGGY_MIN_SPEED :: 10
 PIGGY_MAX_SPEED :: 25
 
