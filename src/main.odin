@@ -5,15 +5,16 @@ import "core:math"
 import "core:math/rand"
 import rl "vendor:raylib"
 
-SCREEN_WIDTH :: 800
-SCREEN_HEIGHT :: 640
+SCREEN_WIDTH :: 1480
+SCREEN_HEIGHT :: 960
 
 
 BACKGROUND_COLOR :: rl.Color{47, 158, 141, 255}
 // TODO: Make this adjsutable in the GUI
-NUM_PIGGIES :: 1000
+NUM_PIGGIES :: 100000
 
 piggies_aligned: [dynamic]PiggyAligned
+piggies_packed: [dynamic]PiggyPacked
 
 main :: proc() {
     rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Packed")
@@ -22,6 +23,7 @@ main :: proc() {
 
     for _ in 0 ..< NUM_PIGGIES {
         append(&piggies_aligned, piggy_aligned_create())
+        append(&piggies_packed, piggy_packed_create())
     }
 
     delta: f32
@@ -35,8 +37,12 @@ main :: proc() {
 }
 
 update :: proc(delta: f32) {
-    for &piggy in piggies_aligned {
-        piggy_aligned_update(&piggy, delta)
+    // for &piggy in piggies_aligned {
+    //     piggy_update(&piggy, delta)
+    // }
+
+    for &piggy in piggies_packed {
+        piggy_update(&piggy, delta)
     }
 }
 
@@ -45,8 +51,8 @@ draw :: proc() {
 
     rl.ClearBackground(BACKGROUND_COLOR)
 
-    for &piggy in piggies_aligned {
-        piggy_aligned_draw(&piggy)
+    for &piggy in piggies_packed {
+        piggy_draw(&piggy)
     }
 
     draw_fps()
@@ -77,6 +83,7 @@ PiggyPacked :: struct #packed {
     position: [2]f32,
     velocity: [2]f32,
     size:     i32,
+    speed:    f32,
     fluff:    bool,
 }
 
@@ -98,11 +105,25 @@ piggy_aligned_create :: proc() -> PiggyAligned {
     return {position, velocity, size, speed, fluff}
 }
 
-piggy_packed_create :: proc() {
-    // TODO: implement piggy_packed_create
+piggy_packed_create :: proc() -> PiggyPacked {
+    x := rand.int31_max(SCREEN_WIDTH - 2 * PIGGY_MAX_SIZE) + PIGGY_MAX_SIZE
+    y := rand.int31_max(SCREEN_HEIGHT - 2 * PIGGY_MAX_SIZE) + PIGGY_MAX_SIZE
+    position: [2]f32 = {f32(x), f32(y)}
+
+    theta := rand.float32() * math.TAU
+    velocity_x := math.cos(theta)
+    velocity_y := math.sin(theta)
+    speed :=
+        rand.float32() * (PIGGY_MAX_SPEED - PIGGY_MIN_SPEED) + PIGGY_MIN_SPEED
+    velocity: [2]f32 = {velocity_x, velocity_y} * speed
+
+    size := rand.int31_max(PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
+    fluff := rand.float32() >= 0.5
+
+    return {position, velocity, size, speed, fluff}
 }
 
-piggy_aligned_update :: proc(p: ^PiggyAligned, delta: f32) {
+piggy_update :: proc(p: ^$Piggy, delta: f32) {
     movement := p.velocity * delta
     p.position += movement
 
@@ -119,11 +140,7 @@ piggy_aligned_update :: proc(p: ^PiggyAligned, delta: f32) {
     }
 }
 
-piggy_packed_update :: proc(p: ^PiggyPacked, delta: f32) {
-    // TODO: implement piggy_packed_update
-}
-
-piggy_aligned_draw :: proc(p: ^PiggyAligned) {
+piggy_draw :: proc(p: ^$Piggy) {
     rl.DrawRectangle(
         i32(p.position.x),
         i32(p.position.y),
@@ -131,8 +148,4 @@ piggy_aligned_draw :: proc(p: ^PiggyAligned) {
         p.size,
         rl.PINK,
     )
-}
-
-piggy_packed_draw :: proc(p: ^PiggyPacked) {
-    // TODO: implement piggy_packed_draw
 }
