@@ -47,14 +47,14 @@ update :: proc(delta: f32) {
                 append(&piggies_packed, piggy_aligned_to_packed(&p))
             }
 
-            clear(&piggies_aligned)
+            shrink(&piggies_aligned, 0)
             active_piggy_type = .Packed
         case .Packed:
             for &p in piggies_packed {
                 append(&piggies_aligned, piggy_packed_to_aligned(&p))
             }
 
-            clear(&piggies_packed)
+            shrink(&piggies_packed, 0)
             active_piggy_type = .Aligned
         }
     }
@@ -80,17 +80,13 @@ update_piggy_count :: proc() {
             append(&piggies_aligned, piggy_aligned_create())
         }
 
-        if i32(len(piggies_aligned)) > num_piggies {
-            shrink(&piggies_aligned, num_piggies)
-        }
+        shrink(&piggies_aligned, num_piggies)
     case .Packed:
         for i32(len(piggies_packed)) < num_piggies {
             append(&piggies_packed, piggy_packed_create())
         }
 
-        if i32(len(piggies_packed)) > num_piggies {
-            shrink(&piggies_packed, num_piggies)
-        }
+        shrink(&piggies_packed, num_piggies)
     }
 }
 
