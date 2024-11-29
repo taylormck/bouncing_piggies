@@ -24,7 +24,7 @@ You can read all about it and how to set it up on [the Odin website](https://odi
 Once you have that set up, you just need to build it locally and run using `odin run src`.
 Since this is intended to stress test performance, you might want to add the `-o:speed` flag, so `odin run src -o:speed` would be the full command.
 
-### Where'd that cute little piggy sprite come from
+### Where'd that cute little piggy sprite come from?
 
 I just searched for pig sprites on Itch.io and found a free one.
 Here's [the creator's page on Itch](https://caz-creates-games.itch.io/piggy)
