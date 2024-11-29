@@ -42,6 +42,17 @@ main :: proc() {
 }
 
 update :: proc(delta: f32) {
+    if should_switch_piggy_type {
+        switch (active_piggy_type) {
+        case .Aligned:
+            clear(&piggies_aligned)
+            active_piggy_type = .Packed
+        case .Packed:
+            clear(&piggies_packed)
+            active_piggy_type = .Aligned
+        }
+    }
+
     update_piggy_count()
 
     switch (active_piggy_type) {
