@@ -163,8 +163,8 @@ PiggyPacked :: struct #packed {
 }
 
 piggy_aligned_create :: proc() -> PiggyAligned {
-    x := rand.int31_max(SCREEN_WIDTH - 2 * PIGGY_MAX_SIZE) + PIGGY_MAX_SIZE
-    y := rand.int31_max(SCREEN_HEIGHT - 2 * PIGGY_MAX_SIZE) + PIGGY_MAX_SIZE
+    x := rand.int31_max(SCREEN_WIDTH - PIGGY_MAX_SIZE)
+    y := rand.int31_max(SCREEN_HEIGHT - PIGGY_MAX_SIZE)
     position: [2]f32 = {f32(x), f32(y)}
 
     theta := rand.float32() * math.TAU
@@ -181,8 +181,8 @@ piggy_aligned_create :: proc() -> PiggyAligned {
 }
 
 piggy_packed_create :: proc() -> PiggyPacked {
-    x := rand.int31_max(SCREEN_WIDTH - 2 * PIGGY_MAX_SIZE) + PIGGY_MAX_SIZE
-    y := rand.int31_max(SCREEN_HEIGHT - 2 * PIGGY_MAX_SIZE) + PIGGY_MAX_SIZE
+    x := rand.int31_max(SCREEN_WIDTH - PIGGY_MAX_SIZE)
+    y := rand.int31_max(SCREEN_HEIGHT - PIGGY_MAX_SIZE)
     position: [2]f32 = {f32(x), f32(y)}
 
     theta := rand.float32() * math.TAU
