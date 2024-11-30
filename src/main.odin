@@ -2,6 +2,7 @@ package main
 
 import "core:fmt"
 import "core:math"
+import "core:time"
 import rl "vendor:raylib"
 
 SCREEN_WIDTH :: 1480
@@ -20,6 +21,8 @@ piggies_packed: [dynamic]PiggyPacked
 
 should_switch_piggy_type := false
 
+update_timer: RollingAverageTimer
+
 main :: proc() {
     rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Packed")
     defer rl.CloseWindow()
@@ -28,6 +31,8 @@ main :: proc() {
 
     piggy_sprite = rl.LoadTexture("assets/sprites/piggy/piggy_sheet.png")
     defer rl.UnloadTexture(piggy_sprite)
+
+    update_timer = rolling_average_timer_create()
 
     delta: f32
 
@@ -61,6 +66,8 @@ update :: proc(delta: f32) {
 
     update_piggy_count()
 
+    // We only want to measure the actual update time
+    start := time.now()
     switch (active_piggy_type) {
     case .Aligned:
         for &piggy in piggies_aligned {
@@ -71,6 +78,12 @@ update :: proc(delta: f32) {
             piggy_update(&piggy, delta)
         }
     }
+    end := time.now()
+    diff := time.diff(start, end)
+    rolling_average_timer_append(
+        &update_timer,
+        time.duration_microseconds(diff),
+    )
 }
 
 update_piggy_count :: proc() {
@@ -122,7 +135,7 @@ draw_gui :: proc() {
     piggy_message := fmt.caprintf("Piggy Type: {}", current_piggy_type)
     num_piggies_message := fmt.caprintf("Number of piggies: {}", num_piggies)
 
-    rl.GuiPanel({5, 5, 200, 200}, "#191# Stats")
+    rl.GuiPanel({5, 5, 200, 240}, "#191# Stats")
     rl.GuiLabel({10, 25, 190, 20}, fps)
     rl.GuiLabel({10, 45, 190, 20}, piggy_message)
 
@@ -145,4 +158,12 @@ draw_gui :: proc() {
         piggy_mem = size_of(PiggyPacked) * cap(&piggies_packed)
     }
     rl.GuiLabel({10, 160, 190, 20}, fmt.caprintf("Piggy bytes: %M", piggy_mem))
+
+    average_time := rolling_average_timer_get_average_time(&update_timer)
+    rl.GuiLabel({10, 180, 190, 20}, fmt.caprintf("Average update time:"))
+    rl.GuiLabel({10, 200, 190, 20}, fmt.caprintf("(over 1000 frames)"))
+    rl.GuiLabel(
+        {10, 220, 190, 20},
+        fmt.caprintf("%8.3f microseconds", average_time),
+    )
 }
