@@ -122,7 +122,7 @@ draw_gui :: proc() {
     piggy_message := fmt.caprintf("Piggy Type: {}", current_piggy_type)
     num_piggies_message := fmt.caprintf("Number of piggies: {}", num_piggies)
 
-    rl.GuiPanel({5, 5, 200, 160}, "#191# Stats")
+    rl.GuiPanel({5, 5, 200, 200}, "#191# Stats")
     rl.GuiLabel({10, 25, 190, 20}, fps)
     rl.GuiLabel({10, 45, 190, 20}, piggy_message)
 
@@ -136,4 +136,13 @@ draw_gui :: proc() {
     @(static) new_piggy_count: f32
     rl.GuiSlider({10, 135, 190, 20}, "", "", &new_piggy_count, 2, 6)
     num_piggies = i32(math.pow(10, new_piggy_count))
+
+    piggy_mem: int
+    switch (active_piggy_type) {
+    case .Aligned:
+        piggy_mem = size_of(PiggyAligned) * cap(&piggies_aligned)
+    case .Packed:
+        piggy_mem = size_of(PiggyPacked) * cap(&piggies_packed)
+    }
+    rl.GuiLabel({10, 160, 190, 20}, fmt.caprintf("Piggy bytes: %M", piggy_mem))
 }
