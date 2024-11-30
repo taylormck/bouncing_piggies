@@ -19,7 +19,7 @@ PIGGY_SPECIAL_COLOR_RATE :: 0.01
 PiggyAligned :: struct {
     position:      [2]f32,
     velocity:      [2]f32,
-    size:          i32,
+    size:          f32,
     speed:         f32,
     special_color: bool,
 }
@@ -27,7 +27,7 @@ PiggyAligned :: struct {
 PiggyPacked :: struct #packed {
     position:      [2]f32,
     velocity:      [2]f32,
-    size:          i32,
+    size:          f32,
     speed:         f32,
     special_color: bool,
 }
@@ -44,7 +44,7 @@ piggy_aligned_create :: proc() -> PiggyAligned {
         rand.float32() * (PIGGY_MAX_SPEED - PIGGY_MIN_SPEED) + PIGGY_MIN_SPEED
     velocity: [2]f32 = {velocity_x, velocity_y} * speed
 
-    size := rand.int31_max(PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
+    size := rand.float32() * (PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
     special_color := rand.float32() < PIGGY_SPECIAL_COLOR_RATE
 
     return {position, velocity, size, speed, special_color}
@@ -62,7 +62,7 @@ piggy_packed_create :: proc() -> PiggyPacked {
         rand.float32() * (PIGGY_MAX_SPEED - PIGGY_MIN_SPEED) + PIGGY_MIN_SPEED
     velocity: [2]f32 = {velocity_x, velocity_y} * speed
 
-    size := rand.int31_max(PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
+    size := rand.float32() * (PIGGY_MAX_SIZE - PIGGY_MIN_SIZE) + PIGGY_MIN_SIZE
     special_color := rand.float32() < PIGGY_SPECIAL_COLOR_RATE
 
     return {position, velocity, size, speed, special_color}
@@ -74,20 +74,20 @@ piggy_update :: proc(p: ^$Piggy, delta: f32) {
 
     if p.position.x <= 0 {
         p.velocity.x = abs(p.velocity.x)
-    } else if p.position.x >= SCREEN_WIDTH - f32(p.size) {
+    } else if p.position.x >= SCREEN_WIDTH - p.size {
         p.velocity.x = -abs(p.velocity.x)
     }
 
     if p.position.y <= 0 {
         p.velocity.y = abs(p.velocity.y)
-    } else if p.position.y >= SCREEN_HEIGHT - f32(p.size) {
+    } else if p.position.y >= SCREEN_HEIGHT - p.size {
         p.velocity.y = -abs(p.velocity.y)
     }
 }
 
 piggy_draw :: proc(p: ^$Piggy) {
     tint := p.special_color ? rl.MAROON : rl.WHITE
-    dest := rl.Rectangle{p.position.x, p.position.y, f32(p.size), f32(p.size)}
+    dest := rl.Rectangle{p.position.x, p.position.y, p.size, p.size}
 
     rl.DrawTexturePro(piggy_sprite, piggy_sprite_source, dest, {0, 0}, 0, tint)
 }
