@@ -62,6 +62,8 @@ update :: proc(delta: f32) {
             shrink(&piggies_packed, 0)
             active_piggy_type = .Aligned
         }
+
+        rolling_average_timer_clear(&update_timer)
     }
 
     update_piggy_count()
@@ -89,17 +91,25 @@ update :: proc(delta: f32) {
 update_piggy_count :: proc() {
     switch (active_piggy_type) {
     case .Aligned:
-        for i32(len(piggies_aligned)) < num_piggies {
-            append(&piggies_aligned, piggy_aligned_create())
-        }
+        if i32(len(piggies_aligned)) != num_piggies {
+            rolling_average_timer_clear(&update_timer)
 
-        shrink(&piggies_aligned, num_piggies)
+            for i32(len(piggies_aligned)) < num_piggies {
+                append(&piggies_aligned, piggy_aligned_create())
+            }
+
+            shrink(&piggies_aligned, num_piggies)
+        }
     case .Packed:
-        for i32(len(piggies_packed)) < num_piggies {
-            append(&piggies_packed, piggy_packed_create())
-        }
+        if i32(len(piggies_packed)) != num_piggies {
+            rolling_average_timer_clear(&update_timer)
 
-        shrink(&piggies_packed, num_piggies)
+            for i32(len(piggies_packed)) < num_piggies {
+                append(&piggies_packed, piggy_packed_create())
+            }
+
+            shrink(&piggies_packed, num_piggies)
+        }
     }
 }
 

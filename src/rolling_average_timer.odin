@@ -1,5 +1,6 @@
 package main
 
+import "core:fmt"
 import "core:time"
 
 ROLLING_AVERGAE_TIMER_MAX_LEN :: 1000
@@ -44,6 +45,10 @@ rolling_average_timer_append :: proc(t: ^RollingAverageTimer, time: f64) {
     if rolling_average_timer_len(t) > ROLLING_AVERGAE_TIMER_MAX_LEN {
         increment_index(&t.start)
     }
+}
+
+rolling_average_timer_clear :: proc(t: ^RollingAverageTimer) {
+    t.end = t.start
 }
 
 increment_index :: proc(i: ^int) {
