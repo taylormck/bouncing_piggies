@@ -9,12 +9,20 @@ It can manage the data for the pigs as either aligned (aka "unpacked") structs o
 
 You can adjust the number of pigs and toggle between packed & unpacked structs and see how it affects your framerate.
 
-![Example screenshot](docs/example.png)
+![Example screenshot](docs/example-aligned.png)
 
 ### Results
 
-For the curious, whether the structs were packed or not had a negligible effect on performance on my machine.
-There was no measureable difference in framerate.
+For the curious, the packed structs used less memory and had _marginally_ better performance on my machine.
+The difference was pretty small, however: several hundred microseconds per frame while updating 1,000,000 entities.
+
+Note that this does not guarantee that packing structs will improve all programs in all situations on all machines.
+It only proves that it's a _possible_ route for optimization.
+
+Really, if you're using this many entities, you're better off using other strategies,
+such as [SoA](https://en.wikipedia.org/wiki/AoS_and_SoA#Structure_of_arrays)
+or [ECS](https://en.wikipedia.org/wiki/Entity_component_system)
+to manage them.
 
 ### How to run
 
