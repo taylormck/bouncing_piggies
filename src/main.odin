@@ -161,7 +161,10 @@ draw_gui :: proc() {
 
     average_time := rolling_average_timer_get_average_time(&update_timer)
     rl.GuiLabel({10, 180, 190, 20}, fmt.caprintf("Average update time:"))
-    rl.GuiLabel({10, 200, 190, 20}, fmt.caprintf("(over 1000 frames)"))
+    rl.GuiLabel(
+        {10, 200, 190, 20},
+        fmt.caprintf("(over {} frames)", ROLLING_AVERGAE_TIMER_MAX_LEN),
+    )
     rl.GuiLabel(
         {10, 220, 190, 20},
         fmt.caprintf("%8.3f microseconds", average_time),
